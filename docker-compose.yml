@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+  django_project:
+    container_name: django_project
+    build:
+      context: .
+    restart: always
+    depends_on:
+      - db
+      - redis
+      - elasticsearch
+    ports:
+      - "8000:8000"
+
+  db:
+    image: postgres:15
+    restart: always
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  celery:
+    build: .
+    command: celery -A drf_downloader worker -l info
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  flower:
+    build: .
+    command: celery -A drf_downloader flower
+    ports:
+      - "5555:5555"
+    depends_on:
+      - celery
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+
+volumes:
+  pg_data:

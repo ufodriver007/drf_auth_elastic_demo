@@ -92,8 +92,8 @@ DATABASES = {
         'NAME': os.getenv('POSTGRES_DB'),
         'USER': os.getenv('POSTGRES_USER'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '',
+        'HOST': 'db',
+        'PORT': '5432',
     }
 }
 
@@ -171,8 +171,8 @@ SIMPLE_JWT = {
 
 }
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'  # protocol://hostname
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_URL = 'redis://redis:6379/0'  # protocol://hostname
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.vk.VKOAuth2',

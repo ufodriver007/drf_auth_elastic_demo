@@ -163,5 +163,3 @@ class SearchTest(TestCase):
     def test_search(self):
         response = requests.get('http://127.0.0.1:9200/file_index/_search/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-

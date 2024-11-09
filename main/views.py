@@ -60,7 +60,7 @@ class UploadView(APIView):
                     profile.save()
 
                     # код добаления имени файла в индекс elasticsearch
-                    requests.put(f'http://127.0.0.1:9200/file_index/_doc/{request.user.id}/_create',
+                    requests.put(f'http://elasticsearch:9200/file_index/_doc/{request.user.id}/_create',
                                  json={'title': name},
                                  headers={'content-type': 'application/json'})
                     break
@@ -69,7 +69,7 @@ class UploadView(APIView):
             return Response({'result': 'Upload failed! Please log-in!'}, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             print(e)
-            return Response({'result': 'fail'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'result': f'fail {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class UploadResultView(APIView):
@@ -102,7 +102,7 @@ class OAuthCompleteView(APIView):
 
 class ElasticSearchView(APIView):
     def get(self, request, q: str):
-        result = requests.get(f'http://127.0.0.1:9200/file_index/_search', json={
+        result = requests.get(f'http://elasticsearch:9200/file_index/_search', json={
             "query": {
                 "match": {
                     "title": q
